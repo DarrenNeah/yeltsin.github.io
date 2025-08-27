@@ -1,11 +1,1055 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Document</title>
-</head>
-<body>
-    Hello World!
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>PNG NID Registration</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <style>
+            :root {
+                --primary: #005eb8;
+                --secondary: #ce1126;
+                --accent: #f9d616;
+                --dark: #000000;
+                --light: #f8f9fa;
+                --success: #28a745;
+                --warning: #ffc107;
+                --danger: #dc3545;
+                --gray: #6c757d;
+            }
+            
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+            
+            body {
+                background-color: #f0f2f5;
+                color: #333;
+                overflow: hidden;
+                height: 100vh;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            #app-container {
+                position: relative;
+                width: 100%;
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            /* 3D Background Canvas */
+            #bg-canvas {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+            }
+            
+            /* App Content */
+            #app-content {
+                position: relative;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                z-index: 1;
+                background: rgba(255, 255, 255, 0.95);
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+            }
+            
+            /* Header */
+            .app-header {
+                background: linear-gradient(135deg, var(--primary), var(--secondary));
+                color: white;
+                padding: 1rem;
+                text-align: center;
+                position: relative;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                z-index: 10;
+            }
+            
+            .logo-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 0.5rem;
+            }
+            
+            .logo {
+                width: 50px;
+                height: 50px;
+                background: white;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-right: 10px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+            
+            .logo svg {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .app-title {
+                font-size: 1.2rem;
+                font-weight: bold;
+            }
+            
+            .app-subtitle {
+                font-size: 0.8rem;
+                opacity: 0.9;
+            }
+            
+            /* Progress Bar */
+            .progress-container {
+                padding: 0.5rem 1rem;
+                background: white;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+            
+            .progress-bar {
+                height: 6px;
+                background: #e9ecef;
+                border-radius: 3px;
+                overflow: hidden;
+            }
+            
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(to right, var(--primary), var(--secondary));
+                border-radius: 3px;
+                transition: width 0.5s ease;
+                width: 0%;
+            }
+            
+            .step-indicator {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 0.5rem;
+                font-size: 0.7rem;
+                color: var(--gray);
+            }
+            
+            .step-active {
+                color: var(--primary);
+                font-weight: bold;
+            }
+            
+            /* Main Content */
+            .main-content {
+                flex: 1;
+                overflow-y: auto;
+                padding: 1rem;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .step {
+                display: none;
+                animation: fadeIn 0.5s ease;
+            }
+            
+            .step-active {
+                display: block;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            .form-label {
+                display: block;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+            }
+            
+            .form-control {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid #ced4da;
+                border-radius: 0.5rem;
+                font-size: 1rem;
+                transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            }
+            
+            .form-control:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 0.2rem rgba(0, 94, 184, 0.25);
+            }
+            
+            .btn {
+                display: inline-block;
+                font-weight: 400;
+                color: #212529;
+                text-align: center;
+                vertical-align: middle;
+                cursor: pointer;
+                background-color: transparent;
+                border: 1px solid transparent;
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+                border-radius: 0.5rem;
+                transition: all 0.15s ease;
+            }
+            
+            .btn-primary {
+                color: #fff;
+                background-color: var(--primary);
+                border-color: var(--primary);
+            }
+            
+            .btn-primary:hover {
+                background-color: #004a9b;
+                border-color: #004a9b;
+            }
+            
+            .btn-block {
+                display: block;
+                width: 100%;
+            }
+            
+            .btn-lg {
+                padding: 1rem 2rem;
+                font-size: 1.1rem;
+            }
+            
+            /* Language Selector */
+            .language-selector {
+                display: flex;
+                justify-content: center;
+                margin: 1rem 0;
+            }
+            
+            .language-btn {
+                padding: 0.5rem 1rem;
+                margin: 0 0.5rem;
+                border: 2px solid var(--primary);
+                border-radius: 0.5rem;
+                background: white;
+                color: var(--primary);
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .language-btn.active {
+                background: var(--primary);
+                color: white;
+            }
+            
+            /* OTP Input */
+            .otp-container {
+                display: flex;
+                justify-content: space-between;
+                margin: 1rem 0;
+            }
+            
+            .otp-input {
+                width: 50px;
+                height: 50px;
+                text-align: center;
+                font-size: 1.5rem;
+                border: 2px solid #ced4da;
+                border-radius: 0.5rem;
+                transition: all 0.15s ease;
+            }
+            
+            .otp-input:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 0.2rem rgba(0, 94, 184, 0.25);
+                outline: none;
+            }
+            
+            /* Document Upload */
+            .upload-area {
+                border: 2px dashed #ced4da;
+                border-radius: 0.5rem;
+                padding: 2rem;
+                text-align: center;
+                margin-bottom: 1rem;
+                transition: all 0.3s ease;
+                background: #f8f9fa;
+            }
+            
+            .upload-area.active {
+                border-color: var(--primary);
+                background: rgba(0, 94, 184, 0.05);
+            }
+            
+            .upload-icon {
+                font-size: 3rem;
+                color: var(--gray);
+                margin-bottom: 1rem;
+            }
+            
+            /* Selfie Capture */
+            .camera-container {
+                width: 100%;
+                height: 300px;
+                background: #000;
+                border-radius: 0.5rem;
+                overflow: hidden;
+                margin-bottom: 1rem;
+                position: relative;
+            }
+            
+            .camera-placeholder {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            }
+            
+            .camera-controls {
+                display: flex;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+            
+            /* Appointment Calendar */
+            .calendar-container {
+                background: white;
+                border-radius: 0.5rem;
+                padding: 1rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 1rem;
+            }
+            
+            .calendar-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+            
+            .calendar-grid {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 0.5rem;
+            }
+            
+            .calendar-cell {
+                text-align: center;
+                padding: 0.5rem;
+                border-radius: 50%;
+                cursor: pointer;
+            }
+            
+            .calendar-cell.active {
+                background: var(--primary);
+                color: white;
+            }
+            
+            /* Payment Methods */
+            .payment-methods {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                margin: 1rem 0;
+            }
+            
+            .payment-method {
+                border: 2px solid #ced4da;
+                border-radius: 0.5rem;
+                padding: 1rem;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .payment-method.active {
+                border-color: var(--primary);
+                background: rgba(0, 94, 184, 0.05);
+            }
+            
+            /* Status Tracker */
+            .status-tracker {
+                margin: 2rem 0;
+            }
+            
+            .status-step {
+                display: flex;
+                align-items: center;
+                margin-bottom: 1.5rem;
+                position: relative;
+            }
+            
+            .status-step:not(:last-child):before {
+                content: '';
+                position: absolute;
+                top: 24px;
+                left: 11px;
+                height: calc(100% + 10px);
+                border-left: 2px dashed #ced4da;
+            }
+            
+            .status-icon {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: #e9ecef;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-right: 1rem;
+                z-index: 1;
+            }
+            
+            .status-step.active .status-icon {
+                background: var(--primary);
+                color: white;
+            }
+            
+            .status-step.completed .status-icon {
+                background: var(--success);
+                color: white;
+            }
+            
+            /* QR Code */
+            .qr-container {
+                text-align: center;
+                padding: 2rem;
+                background: white;
+                border-radius: 0.5rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                margin: 2rem 0;
+            }
+            
+            .qr-code {
+                width: 200px;
+                height: 200px;
+                margin: 0 auto;
+                background: #f8f9fa;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid #ced4da;
+                border-radius: 0.5rem;
+            }
+            
+            /* Navigation */
+            .nav-buttons {
+                display: flex;
+                justify-content: space-between;
+                padding: 1rem;
+                background: white;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* Animations */
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            .pulse {
+                animation: pulse 2s infinite;
+            }
+            
+            /* Responsive Adjustments */
+            @media (max-width: 480px) {
+                .app-title {
+                    font-size: 1rem;
+                }
+                
+                .app-subtitle {
+                    font-size: 0.7rem;
+                }
+                
+                .btn-lg {
+                    padding: 0.75rem 1.5rem;
+                    font-size: 1rem;
+                }
+                
+                .otp-input {
+                    width: 40px;
+                    height: 40px;
+                    font-size: 1.2rem;
+                }
+            }
+            
+            /* 3D Elements */
+            .floating-card {
+                transform-style: preserve-3d;
+                transition: transform 0.5s ease;
+            }
+            
+            .floating-card:hover {
+                transform: translateY(-5px) rotateX(5deg);
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app-container">
+            <canvas id="bg-canvas"></canvas>
+            <div id="app-content">
+                <header class="app-header">
+                    <div class="logo-container">
+                        <div class="logo">
+                            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M50 10L60 40H90L65 55L75 85L50 70L25 85L35 55L10 40H40L50 10Z" fill="#005eb8"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="app-title">PNG NID Registration</h1>
+                            <p class="app-subtitle">Civil & Identity Registry</p>
+                        </div>
+                    </div>
+                </header>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="step-indicator">
+                        <span class="step-active">Start</span>
+                        <span>Details</span>
+                        <span>Documents</span>
+                        <span>Biometrics</span>
+                        <span>Finish</span>
+                    </div>
+                </div>
+                
+                <main class="main-content" id="main-content">
+                    <!-- Step 1: Language Selection -->
+                    <div class="step step-active" id="step-1">
+                        <div class="text-center">
+                            <h2>Welcome to PNG NID Registration</h2>
+                            <p>Please select your preferred language</p>
+                            
+                            <div class="language-selector">
+                                <button class="language-btn active" data-lang="en">English</button>
+                                <button class="language-btn" data-lang="tp">Tok Pisin</button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button class="btn btn-primary btn-lg btn-block" onclick="nextStep()">
+                                    Register for NID
+                                </button>
+                            </div>
+                            
+                            <p>Partnership with Digicel PNG and UNDP</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Mobile Verification -->
+                    <div class="step" id="step-2">
+                        <h2>Mobile Number Verification</h2>
+                        <p>We'll use your Digicel number for identity verification</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Digicel PNG Mobile Number</label>
+                            <input type="tel" class="form-control" placeholder="7XXXXXXX" value="74567890" readonly>
+                        </div>
+                        
+                        <p>An OTP has been sent to your number</p>
+                        
+                        <div class="otp-container">
+                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this)">
+                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this)">
+                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this)">
+                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this)">
+                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this)">
+                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block" onclick="verifyOTP()">Verify OTP</button>
+                        </div>
+                        
+                        <p>Didn't receive the code? <a href="#" onclick="resendOTP()">Resend</a></p>
+                    </div>
+                    
+                    <!-- Additional steps would be defined here -->
+                    <!-- Step 3: Personal Details -->
+                    <div class="step" id="step-3">
+                        <h2>Personal Information</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" placeholder="First Name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Middle Name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Last Name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Place of Birth</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Mother's Name</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Father's Name</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Document Upload -->
+                    <div class="step" id="step-4">
+                        <h2>Document Upload</h2>
+                        <p>Please upload supporting documents</p>
+                        
+                        <div class="upload-area" id="upload-area">
+                            <div class="upload-icon">📄</div>
+                            <p>Tap to upload birth certificate or supporting letter</p>
+                            <p class="small">Supported formats: JPG, PNG, PDF</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block" onclick="simulateUpload()">Upload Document</button>
+                        </div>
+                        
+                        <div id="upload-status"></div>
+                    </div>
+                    
+                    <!-- Step 5: Selfie Capture -->
+                    <div class="step" id="step-5">
+                        <h2>Facial Verification</h2>
+                        <p>Please take a selfie for identity verification</p>
+                        
+                        <div class="camera-container">
+                            <div class="camera-placeholder">
+                                <div class="text-center">
+                                    <div style="font-size: 4rem;">📷</div>
+                                    <p>Camera Preview</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="camera-controls">
+                            <button class="btn btn-primary" onclick="captureSelfie()">Capture Selfie</button>
+                        </div>
+                        
+                        <div id="liveness-check" class="mt-3" style="display: none;">
+                            <div class="alert alert-success">
+                                Liveness verified successfully!
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 6: Appointment Scheduling -->
+                    <div class="step" id="step-6">
+                        <h2>Biometrics Appointment</h2>
+                        <p>Please select a date and location for your biometrics collection</p>
+                        
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button class="btn">&lt;</button>
+                                <h4>November 2023</h4>
+                                <button class="btn">&gt;</button>
+                            </div>
+                            
+                            <div class="calendar-grid">
+                                <div class="text-center"><strong>S</strong></div>
+                                <div class="text-center"><strong>M</strong></div>
+                                <div class="text-center"><strong>T</strong></div>
+                                <div class="text-center"><strong>W</strong></div>
+                                <div class="text-center"><strong>T</strong></div>
+                                <div class="text-center"><strong>F</strong></div>
+                                <div class="text-center"><strong>S</strong></div>
+                                
+                                <!-- Calendar days would be generated here -->
+                                <div class="calendar-cell">27</div>
+                                <div class="calendar-cell">28</div>
+                                <div class="calendar-cell">29</div>
+                                <div class="calendar-cell">30</div>
+                                <div class="calendar-cell">31</div>
+                                <div class="calendar-cell">1</div>
+                                <div class="calendar-cell">2</div>
+                                
+                                <div class="calendar-cell">3</div>
+                                <div class="calendar-cell">4</div>
+                                <div class="calendar-cell">5</div>
+                                <div class="calendar-cell">6</div>
+                                <div class="calendar-cell">7</div>
+                                <div class="calendar-cell">8</div>
+                                <div class="calendar-cell">9</div>
+                                
+                                <div class="calendar-cell">10</div>
+                                <div class="calendar-cell">11</div>
+                                <div class="calendar-cell">12</div>
+                                <div class="calendar-cell active">13</div>
+                                <div class="calendar-cell">14</div>
+                                <div class="calendar-cell">15</div>
+                                <div class="calendar-cell">16</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Select Location</label>
+                            <select class="form-control">
+                                <option>Port Moresby NID Office</option>
+                                <option>Lae Regional Office</option>
+                                <option>Mt Hagen Provincial Office</option>
+                                <option>Kokopo Service Center</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block" onclick="scheduleAppointment()">Confirm Appointment</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 7: Payment -->
+                    <div class="step" id="step-7">
+                        <h2>Payment</h2>
+                        <p>Registration fee: PGK 10.00</p>
+                        
+                        <div class="payment-methods">
+                            <div class="payment-method active">
+                                <div style="font-size: 2rem;">📱</div>
+                                <p>Mobile Money</p>
+                            </div>
+                            
+                            <div class="payment-method">
+                                <div style="font-size: 2rem;">💳</div>
+                                <p>Credit Card</p>
+                            </div>
+                            
+                            <div class="payment-method">
+                                <div style="font-size: 2rem;">🏦</div>
+                                <p>Bank Transfer</p>
+                            </div>
+                            
+                            <div class="payment-method">
+                                <div style="font-size: 2rem;">💵</div>
+                                <p>Cash at Agent</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-block" onclick="processPayment()">Pay Now</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 8: Submission Complete -->
+                    <div class="step" id="step-8">
+                        <div class="text-center">
+                            <div style="font-size: 4rem; color: var(--success);">✅</div>
+                            <h2>Application Submitted</h2>
+                            <p>Your NID application has been successfully submitted</p>
+                            
+                            <div class="status-tracker">
+                                <div class="status-step completed">
+                                    <div class="status-icon">✓</div>
+                                    <div>Application Submitted</div>
+                                </div>
+                                
+                                <div class="status-step active">
+                                    <div class="status-icon">2</div>
+                                    <div>Under Review</div>
+                                </div>
+                                
+                                <div class="status-step">
+                                    <div class="status-icon">3</div>
+                                    <div>Biometrics Appointment</div>
+                                </div>
+                                
+                                <div class="status-step">
+                                    <div class="status-icon">4</div>
+                                    <div>Card Production</div>
+                                </div>
+                                
+                                <div class="status-step">
+                                    <div class="status-icon">5</div>
+                                    <div>Ready for Pickup</div>
+                                </div>
+                            </div>
+                            
+                            <p>You will receive SMS updates on your application status</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 9: Ready for Pickup -->
+                    <div class="step" id="step-9">
+                        <div class="text-center">
+                            <div style="font-size: 4rem; color: var(--success);">🎉</div>
+                            <h2>Your NID is Ready!</h2>
+                            <p>Your National Identification Card is ready for pickup</p>
+                            
+                            <div class="qr-container">
+                                <div class="qr-code">
+                                    <div style="font-size: 3rem;">🔒</div>
+                                </div>
+                                <p class="mt-3">Bring this QR code and your PIN to collect your card</p>
+                                <p>Your PIN: <strong>1A9B2C</strong></p>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Select Pickup Location</label>
+                                <select class="form-control">
+                                    <option>Port Moresby NID Office</option>
+                                    <option>Digicel Store - Boroko</option>
+                                    <option>Digicel Store - Waigani</option>
+                                    <option>Digicel Store - Gerehu</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button class="btn btn-primary btn-block" onclick="confirmPickup()">Confirm Pickup Location</button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                
+                <div class="nav-buttons">
+                    <button class="btn" id="prev-btn" onclick="prevStep()" disabled>Previous</button>
+                    <button class="btn btn-primary" id="next-btn" onclick="nextStep()">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Current step tracker
+            let currentStep = 1;
+            const totalSteps = 9;
+            
+            // Initialize Three.js for 3D background
+            function initThreeJS() {
+                const canvas = document.getElementById('bg-canvas');
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+                
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                
+                // Add floating particles
+                const particlesGeometry = new THREE.BufferGeometry();
+                const particlesCount = 100;
+                
+                const posArray = new Float32Array(particlesCount * 3);
+                const colorArray = new Float32Array(particlesCount * 3);
+                
+                for (let i = 0; i < particlesCount * 3; i++) {
+                    posArray[i] = (Math.random() - 0.5) * 10;
+                    // Colors in PNG national colors
+                    colorArray[i] = i % 3 === 0 ? 0 : i % 3 === 1 ? 0.36 : 0.67; // Black, red, gold
+                }
+                
+                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+                
+                const particlesMaterial = new THREE.PointsMaterial({
+                    size: 0.1,
+                    vertexColors: true
+                });
+                
+                const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+                scene.add(particlesMesh);
+                
+                camera.position.z = 5;
+                
+                // Animation
+                function animate() {
+                    requestAnimationFrame(animate);
+                    
+                    particlesMesh.rotation.x += 0.001;
+                    particlesMesh.rotation.y += 0.001;
+                    
+                    renderer.render(scene, camera);
+                }
+                
+                animate();
+                
+                // Handle resize
+                window.addEventListener('resize', () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                });
+            }
+            
+            // Initialize app
+            function initApp() {
+                initThreeJS();
+                updateProgressBar();
+                
+                // Set up language selection
+                document.querySelectorAll('.language-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.language-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+                
+                // Set up payment method selection
+                document.querySelectorAll('.payment-method').forEach(method => {
+                    method.addEventListener('click', function() {
+                        document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+                
+                // Set up drag and drop for upload
+                const uploadArea = document.getElementById('upload-area');
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('active');
+                });
+                
+                uploadArea.addEventListener('dragleave', function() {
+                    this.classList.remove('active');
+                });
+                
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('active');
+                    handleFileUpload(e.dataTransfer.files[0]);
+                });
+                
+                uploadArea.addEventListener('click', function() {
+                    // Simulate file input click
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*,application/pdf';
+                    fileInput.addEventListener('change', function() {
+                        if (this.files.length > 0) {
+                            handleFileUpload(this.files[0]);
+                        }
+                    });
+                    fileInput.click();
+                });
+            }
+            
+            // Navigation functions
+            function nextStep() {
+                if (currentStep < totalSteps) {
+                    document.getElementById(`step-${currentStep}`).classList.remove('step-active');
+                    currentStep++;
+                    document.getElementById(`step-${currentStep}`).classList.add('step-active');
+                    updateProgressBar();
+                    updateNavButtons();
+                    
+                    // Special handling for certain steps
+                    if (currentStep === 5) {
+                        // Simulate liveness check after a delay
+                        setTimeout(() => {
+                            document.getElementById('liveness-check').style.display = 'block';
+                        }, 2000);
+                    }
+                }
+            }
+            
+            function prevStep() {
+                if (currentStep > 1) {
+                    document.getElementById(`step-${currentStep}`).classList.remove('step-active');
+                    currentStep--;
+                    document.getElementById(`step-${currentStep}`).classList.add('step-active');
+                    updateProgressBar();
+                    updateNavButtons();
+                }
+            }
+            
+            function updateProgressBar() {
+                const progress = (currentStep / totalSteps) * 100;
+                document.getElementById('progress-fill').style.width = `${progress}%`;
+            }
+            
+            function updateNavButtons() {
+                document.getElementById('prev-btn').disabled = currentStep === 1;
+                
+                if (currentStep === totalSteps) {
+                    document.getElementById('next-btn').style.display = 'none';
+                } else {
+                    document.getElementById('next-btn').style.display = 'block';
+                }
+            }
+            
+            // OTP functions
+            function moveToNext(input) {
+                if (input.value.length === 1) {
+                    const next = input.nextElementSibling;
+                    if (next) next.focus();
+                }
+            }
+            
+            function verifyOTP() {
+                // Simulate OTP verification
+                setTimeout(() => {
+                    alert('Mobile number verified successfully!');
+                    nextStep();
+                }, 1000);
+            }
+            
+            function resendOTP() {
+                alert('New OTP has been sent to your mobile number.');
+            }
+            
+            // Document upload
+            function handleFileUpload(file) {
+                const statusDiv = document.getElementById('upload-status');
+                statusDiv.innerHTML = `<div class="alert alert-info">Uploading ${file.name}...</div>`;
+                
+                // Simulate upload process
+                setTimeout(() => {
+                    statusDiv.innerHTML = `<div class="alert alert-success">${file.name} uploaded successfully!</div>`;
+                }, 2000);
+            }
+            
+            function simulateUpload() {
+                handleFileUpload({ name: 'birth_certificate.jpg' });
+            }
+            
+            // Selfie capture
+            function captureSelfie() {
+                alert('Selfie captured successfully! Verifying liveness...');
+                
+                setTimeout(() => {
+                    document.getElementById('liveness-check').style.display = 'block';
+                }, 2000);
+            }
+            
+            // Appointment scheduling
+            function scheduleAppointment() {
+                alert('Appointment scheduled successfully!');
+                nextStep();
+            }
+            
+            // Payment processing
+            function processPayment() {
+                alert('Payment processed successfully!');
+                nextStep();
+            }
+            
+            // Pickup confirmation
+            function confirmPickup() {
+                alert('Pickup location confirmed! You will receive an SMS with details.');
+            }
+            
+            // Initialize the app when the DOM is loaded
+            document.addEventListener('DOMContentLoaded', initApp);
+        </script>
+    </body>
 </html>
