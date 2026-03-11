@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWTS · Materials · Enterprise Demo</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: Inter + Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- consistent styles from previous pages --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            color: #0b1e33;
+            line-height: 1.5;
+            padding: 24px;
+        }
+
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            overflow: hidden;
+            border: 1px solid #e9eef2;
+        }
+
+        .top-nav {
+            background: #082032;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #1e3a5f;
+            flex-wrap: wrap;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 0;
+        }
+
+        .logo-icon {
+            background: #2f7bff;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: white;
+            letter-spacing: -0.2px;
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            font-size: 0.7rem;
+            color: #a4b8d3;
+            font-weight: 500;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 8px 18px;
+            border-radius: 40px;
+            color: #d0e0ff;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.15s;
+            cursor: default;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-item i {
+            font-size: 1rem;
+        }
+
+        .nav-item.active {
+            background: #1f4a8f;
+            color: white;
+        }
+
+        .nav-item:not(.active):hover {
+            background: #1a334f;
+            color: white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+        }
+
+        .user-profile a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .badge {
+            background: #2f7bff;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            background: #31688e;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid #5c8bc0;
+        }
+
+        .main-layout {
+            display: flex;
+            min-height: 700px;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #fafcff;
+            border-right: 1px solid #e0e8f0;
+            padding: 24px 16px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 32px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #597a9f;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-left: 12px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            padding: 10px 12px;
+            margin-bottom: 4px;
+            border-radius: 12px;
+            font-weight: 500;
+            color: #1e3a5f;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: default;
+            transition: 0.1s;
+        }
+
+        .sidebar-menu li i {
+            width: 22px;
+            color: #4a6f94;
+        }
+
+        .sidebar-menu a {
+            color: #4a6f94;
+            text-decoration: none;
+        }
+
+        .sidebar-menu li.active {
+            background: #e6f0ff;
+            color: #0f3b7a;
+            font-weight: 600;
+            border-left: 4px solid #2f7bff;
+        }
+
+        .sidebar-menu li:not(.active):hover {
+            background: #edf2f9;
+        }
+
+        .content-panel {
+            flex: 1;
+            background: white;
+            padding: 28px 32px;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-header h2 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #0b1e33;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #cfddee;
+            cursor: default;
+            transition: 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #0a2a44;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 16px -6px #1d4e8d;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #b7c9e0;
+            color: #1a3d62;
+        }
+
+        .btn i {
+            font-size: 1rem;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: #f9fcff;
+            border-radius: 28px;
+            padding: 24px 20px;
+            border: 1px solid #dde6f2;
+            box-shadow: 0 4px 10px -6px #abc0d6;
+        }
+
+        .stat-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: #55799e;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #082032;
+            margin-top: 8px;
+        }
+
+        .stat-desc {
+            font-size: 0.8rem;
+            color: #3f688b;
+            margin-top: 4px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 2px;
+            background: #ecf2f9;
+            padding: 4px;
+            border-radius: 60px;
+            width: fit-content;
+            margin-bottom: 28px;
+        }
+
+        .filter-tab {
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: transparent;
+            color: #345d87;
+            cursor: default;
+        }
+
+        .filter-tab.active {
+            background: white;
+            color: #0b1e33;
+            box-shadow: 0 4px 10px -4px #b0c8e5;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 20px;
+            border: 1px solid #e6edf6;
+            background: white;
+            margin-bottom: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 18px 16px 10px 16px;
+            color: #4a6f94;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #dbe2ec;
+            background: #f9fcff;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #edf2f8;
+        }
+
+        .badge-status {
+            background: #daf1e7;
+            color: #0b6e4f;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+
+        .badge-warning {
+            background: #fff3d1;
+            color: #a86800;
+        }
+
+        .badge-urgent {
+            background: #ffe6e5;
+            color: #b53b3b;
+        }
+
+        .badge-info {
+            background: #e2eafc;
+            color: #1f5090;
+        }
+
+        .badge-purple {
+            background: #ede2fc;
+            color: #6240a0;
+        }
+
+        .progress {
+            height: 8px;
+            background: #e2eaf3;
+            border-radius: 20px;
+            width: 100px;
+            margin: 6px 0;
+        }
+
+        .progress-fill {
+            height: 8px;
+            background: #2f7bff;
+            border-radius: 20px;
+        }
+
+        .doc-tag {
+            background: #eef4ff;
+            padding: 4px 10px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin-right: 6px;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .gl-code {
+            font-family: 'Space Grotesk', monospace;
+            background: #eaf1fb;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .two-col {
+            display: flex;
+            gap: 28px;
+            margin: 40px 0;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #173458;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e3ebf6;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 8px 20px -12px #b7c9da;
+        }
+
+        .footer-bar {
+            margin-top: 40px;
+            background: #f2f7fd;
+            border-radius: 24px;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #2d4b73;
+            border: 1px solid #dae4f0;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px dashed #cbd9eb;
+            margin: 32px 0;
+        }
+
+        .materials-highlight {
+            background: #f6fbff;
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid #d2e2fc;
+            margin-bottom: 32px;
+        }
+
+        .stock-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .stock-level {
+            height: 12px;
+            background: #2f7bff;
+            border-radius: 20px;
+        }
+
+        .stock-critical {
+            height: 12px;
+            background: #b53b3b;
+            border-radius: 20px;
+        }
+
+        .stock-warning {
+            height: 12px;
+            background: #a86800;
+            border-radius: 20px;
+        }
+
+        .delivery-timeline {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+
+    <!-- top navigation (Materials active) -->
+    <div class="top-nav">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fas fa-road"></i></div>
+            <div class="logo-text">
+                <h1>PWTS·Enterprise</h1>
+                <span>Provincial Works & Technical Services</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a class="nav-item" href="index.html"><i class="fas fa-columns"></i> Dashboard</a>
+            <a class="nav-item" href="nav_1_projects.html"><i class="fas fa-hard-hat"></i> Projects</a>
+            <a class="nav-item" href="nav_2_claims.html"><i class="fas fa-file-invoice-dollar"></i> Claims</a>
+            <a class="nav-item" href="nav_3_fleet.html"><i class="fas fa-truck"></i> Fleet</a>
+            <a class="nav-item active" href="nav_4_materials.html"><i class="fas fa-cubes"></i> Materials</a> <!-- active -->
+            <a class="nav-item" href="nav_5_reports.html"><i class="fas fa-chart-pie"></i> Reports</a>
+        </div>
+        <div class="user-profile">
+            <a href="nav_6_director_view.html" class="badge"><i class="fas fa-user-check"></i> Director's view</a>
+            <div class="avatar">CKB</div>
+        </div>
+    </div>
+
+    <!-- main layout: sidebar + content -->
+    <div class="main-layout">
+        <!-- SIDEBAR (Finance & Claims section, but no specific materials item - we'll keep consistent) -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-heading">Governance</div>
+                <ul class="sidebar-menu">
+                    <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> Executive Dashboard</a></li>
+                    <li><a href="sidebar_2_delegation_register.html"><i class="fas fa-file-signature"></i> Delegation Register</a></li>
+                    <li><a href="sidebar_3_pa_approval.html"><i class="fas fa-stamp"></i> Approvals (PA)</a></li>
+                    <li><a href="sidebar_4_contractors.html"><i class="fas fa-handshake"></i> Contractors</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-heading">Operational</div>
+                <ul class="sidebar-menu">
+                    <li><i class="fas fa-bridge"></i> Technical Services</li>
+                    <li><i class="fas fa-tools"></i> Building & Maintenance</li>
+                    <li><i class="fas fa-oil-can"></i> Plant & Transport</li>
+                    <li><i class="fas fa-clipboard-list"></i> Site Diaries</li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-heading">Finance & Claims</div>
+                <ul class="sidebar-menu">
+                    <li><i class="fas fa-file-invoice"></i> Contractor Claims</li>
+                    <li><i class="fas fa-file-certificate"></i> IPCs (Engineer)</li>
+                    <li><i class="fas fa-money-bill-wave"></i> Payment Vouchers</li>
+                    <li><i class="fas fa-hand-holding-usd"></i> Petty Cash / Imprest</li>
+                    <li><i class="fas fa-book-open"></i> GL Codes</li>
+                </ul>
+            </div>
+            <div style="border-top: 1px dashed #b9cee8; margin: 20px 0; padding-top: 20px;">
+                <div class="sidebar-heading">DOCUMENT VAULT</div>
+                <ul class="sidebar-menu">
+                    <li><i class="fas fa-file-pdf"></i> FIDIC contracts</li>
+                    <li><i class="fas fa-file-excel"></i> BOQ templates</li>
+                    <li><i class="fas fa-history"></i> Audit trail</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT: MATERIALS PAGE -->
+        <div class="content-panel">
+            <!-- info banner -->
+            <div style="background:#f0f3f8; border-radius:16px; padding:12px 20px; color:#1f3f60; font-size:0.85rem; margin-bottom:24px; border-left:6px solid #2f7bff;">
+                <i class="fas fa-cubes" style="margin-right:10px;"></i> 
+                <strong>Materials management module</strong> — track construction materials inventory, purchase orders, deliveries, and stock levels across all projects. Integrates with BOQs and site diaries.
+            </div>
+
+            <!-- page header -->
+            <div class="page-header">
+                <h2>Construction materials</h2>
+                <div class="btn-group">
+                    <div class="btn btn-outline"><i class="fas fa-download"></i> Export inventory</div>
+                    <div class="btn btn-primary"><i class="fas fa-plus-circle"></i> New purchase order</div>
+                </div>
+            </div>
+
+            <!-- materials stats cards -->
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-title"><i class="fas fa-boxes"></i> Stock items</div>
+                    <div class="stat-number">84</div>
+                    <div class="stat-desc">Active inventory</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title"><i class="fas fa-exclamation-triangle"></i> Low stock</div>
+                    <div class="stat-number">12</div>
+                    <div class="stat-desc">Below reorder level</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title"><i class="fas fa-truck-loading"></i> Pending deliveries</div>
+                    <div class="stat-number">8</div>
+                    <div class="stat-desc">K184,500 value</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title"><i class="fas fa-shopping-cart"></i> Orders this month</div>
+                    <div class="stat-number">K326,000</div>
+                    <div class="stat-desc">23 purchase orders</div>
+                </div>
+            </div>
+
+            <!-- filter tabs: material categories -->
+            <div class="filter-tabs">
+                <span class="filter-tab active">All materials</span>
+                <span class="filter-tab">Aggregates</span>
+                <span class="filter-tab">Cement</span>
+                <span class="filter-tab">Steel</span>
+                <span class="filter-tab">Timber</span>
+                <span class="filter-tab">Fuel</span>
+                <span class="filter-tab">Other</span>
+            </div>
+
+            <!-- main materials inventory table -->
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Material code</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Unit</th>
+                            <th>Stock on hand</th>
+                            <th>Reorder level</th>
+                            <th>Status</th>
+                            <th>Location</th>
+                            <th>Last delivery</th>
+                            <th>Unit price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>AGG-01</b></td>
+                            <td>20mm Aggregate</td>
+                            <td>Aggregates</td>
+                            <td>tonnes</td>
+                            <td>245</td>
+                            <td>100</td>
+                            <td><span class="badge-status">OK</span></td>
+                            <td>Wabag Yard</td>
+                            <td>10/04/25</td>
+                            <td>K145/t</td>
+                            <td><i class="fas fa-eye" style="color:#2f7bff;"></i> <i class="fas fa-file-pdf" style="margin-left:10px;"></i></td>
+                        </tr>
+                        <tr>
+                            <td><b>AGG-02</b></td>
+                            <td>40mm Aggregate</td>
+                            <td>Aggregates</td>
+                            <td>tonnes</td>
+                            <td>78</td>
+                            <td>80</td>
+                            <td><span class="badge-warning">Low stock</span></td>
+                            <td>Wabag Yard</td>
+                            <td>05/04/25</td>
+                            <td>K140/t</td>
+                            <td><i class="fas fa-eye"></i></td>
+                        </tr>
+                        <tr>
+                            <td><b>CEM-01</b></td>
+                            <td>Portland Cement</td>
+                            <td>Cement</td>
+                            <td>bags</td>
+                            <td>320</td>
+                            <td>400</td>
+                            <td><span class="badge-urgent">Critical</span></td>
+                            <td>Kandep Shed</td>
+                            <td>02/04/25</td>
+                            <td>K32/bag</td>
+                            <td><i class="fas fa-eye"></i></td>
+                        </tr>
+                        <tr>
+                            <td><b>STL-01</b></td>
+                            <td>12mm Rebar</td>
+                            <td>Steel</td>
+                            <td>lengths</td>
+                            <td>520</td>
+                            <td>300</td>
+                            <td><span class="badge-status">OK</span></td>
+                            <td>Wabag Yard</td>
+                            <td>08/04/25</td>
+                            <td>K85/l</td>
+                            <td><i class="fas fa-eye"></i></td>
+                        </tr>
+                        <tr>
+                            <td><b>STL-02</b></td>
+                            <td>16mm Rebar</td>
+                            <td>Steel</td>
+                            <td>lengths</td>
+                            <td>180</td>
+                            <td>200</td>
+                            <td><span class="badge-warning">Low stock</span></td>
+                            <td>Wabag Yard</td>
+                            <td>08/04/25</td>
+                            <td>K110/l</td>
+                            <td><i class="fas fa-eye"></i></td>
+                        </tr>
+                        <tr>
+                            <td><b>TIM-01</b></td>
+                            <td>100x50 Timber</td>
+                            <td>Timber</td>
+                            <td>lengths</td>
+                            <td>145</td>
+                            <td>150</td>
+                            <td><span class="badge-warning">Low stock</span></td>
+                            <td>Kandep Shed</td>
+                            <td>01/04/25</td>
+                            <td>K45/l</td>
+                            <td><i class="fas fa-eye"></i></td>
+                        </tr>
+                        <tr>
+                            <td><b>FUL-01</b></td>
+                            <td>Diesel</td>
+                            <td>Fuel</td>
+                            <td>litres</td>
+                            <td>8,200</td>
+                            <td>5,000</td>
+                            <td><span class="badge-status">OK</span></td>
+                            <td>Fuel Depot</td>
+                            <td>12/04/25</td>
+                            <td>K5.00/L</td>
+                            <td><i class="fas fa-eye"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- two column: stock alerts + pending deliveries -->
+            <div class="two-col">
+                <!-- left: stock alerts -->
+                <div class="col">
+                    <div class="section-title"><i class="fas fa-exclamation-triangle"></i> Stock alerts</div>
+                    <div class="card">
+                        <div style="margin-bottom:15px;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span><b>CEM-01</b> Portland Cement</span>
+                                <span class="badge-urgent">CRITICAL</span>
+                            </div>
+                            <div class="stock-bar">
+                                <div style="width:100px;">Stock:</div>
+                                <div style="flex:1;"><div class="stock-critical" style="width:80px;"></div></div>
+                                <div>320 / 400 bags</div>
+                            </div>
+                            <div><i class="fas fa-clock"></i> Reorder now - lead time 7 days</div>
+                        </div>
+                        <div style="margin-bottom:15px;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span><b>AGG-02</b> 40mm Aggregate</span>
+                                <span class="badge-warning">LOW</span>
+                            </div>
+                            <div class="stock-bar">
+                                <div style="width:100px;">Stock:</div>
+                                <div style="flex:1;"><div class="stock-warning" style="width:98px;"></div></div>
+                                <div>78 / 80 tonnes</div>
+                            </div>
+                            <div><i class="fas fa-clock"></i> Order placed (PO-2025-042)</div>
+                        </div>
+                        <div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span><b>STL-02</b> 16mm Rebar</span>
+                                <span class="badge-warning">LOW</span>
+                            </div>
+                            <div class="stock-bar">
+                                <div style="width:100px;">Stock:</div>
+                                <div style="flex:1;"><div class="stock-warning" style="width:90px;"></div></div>
+                                <div>180 / 200 lengths</div>
+                            </div>
+                            <div><i class="fas fa-clock"></i> Reorder when below 150</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- right: pending deliveries -->
+                <div class="col">
+                    <div class="section-title"><i class="fas fa-truck-loading"></i> Pending deliveries</div>
+                    <div class="card">
+                        <table style="width:100%;">
+                            <tr>
+                                <td><b>PO-2025-042</b></td>
+                                <td>40mm Aggregate</td>
+                                <td>80 tonnes</td>
+                                <td><span class="badge-warning">Due 18 Apr</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>PO-2025-043</b></td>
+                                <td>Cement</td>
+                                <td>200 bags</td>
+                                <td><span class="badge-urgent">Overdue 12 Apr</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>PO-2025-044</b></td>
+                                <td>12mm Rebar</td>
+                                <td>150 lengths</td>
+                                <td><span class="badge-info">Due 22 Apr</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>PO-2025-045</b></td>
+                                <td>Timber</td>
+                                <td>100 lengths</td>
+                                <td><span class="badge-info">Due 25 Apr</span></td>
+                            </tr>
+                        </table>
+                        <hr>
+                        <div><i class="fas fa-file-pdf"></i> <strong>Delivery dockets pending:</strong> 6 awaiting sign-off</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- materials spotlight: cement critical stock -->
+            <div class="section-title"><i class="fas fa-search"></i> Material spotlight: CEM-01 Portland Cement</div>
+            <div class="materials-highlight">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                    <div>
+                        <span class="gl-code">CEM-01</span> 
+                        <span class="badge-urgent" style="margin-left:10px;">Critical stock</span>
+                        <span class="badge-info">Location: Kandep Shed</span>
+                        <p style="margin:15px 0 5px;"><span class="amount-large">320</span> bags on hand</p>
+                        <p><i class="fas fa-chart-line"></i> Reorder level: 400 bags · <i class="fas fa-hourglass-half"></i> Shortage: 80 bags</p>
+                    </div>
+                    <div style="background:white; border-radius:16px; padding:15px; min-width:240px;">
+                        <i class="fas fa-truck"></i> <strong>Last delivery:</strong> 02/04/25 (150 bags)<br>
+                        <i class="fas fa-clock"></i> <strong>Lead time:</strong> 7 days<br>
+                        <i class="fas fa-shopping-cart"></i> <strong>On order:</strong> PO-2025-043 (200 bags)
+                    </div>
+                </div>
+
+                <!-- consumption and orders -->
+                <div style="margin-top:25px;">
+                    <div style="display:flex; gap:30px; flex-wrap:wrap;">
+                        <div><i class="fas fa-chart-bar"></i> Consumption (Apr): 85 bags</div>
+                        <div><i class="fas fa-chart-bar"></i> Projected use: 120 bags/month</div>
+                        <div><i class="fas fa-exclamation-circle"></i> Days until stockout: 11 days</div>
+                    </div>
+                    <hr>
+                    <div style="display:flex; gap:20px;">
+                        <div><span class="doc-tag">Used by: Kandep Bridge (60%)</span></div>
+                        <div><span class="doc-tag">Used by: District Office (40%)</span></div>
+                        <div><span class="doc-tag">Last PO: #2025-043</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- bottom row: recent deliveries and material requests -->
+            <div class="two-col">
+                <div class="col">
+                    <div class="section-title"><i class="fas fa-clipboard-check"></i> Recent deliveries</div>
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <span><b>12 Apr</b> PO-2025-041</span>
+                            <span>Diesel</span>
+                            <span>4,200 L</span>
+                            <span class="badge-status">received</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <span><b>10 Apr</b> PO-2025-039</span>
+                            <span>20mm Aggregate</span>
+                            <span>120 t</span>
+                            <span class="badge-status">received</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <span><b>08 Apr</b> PO-2025-038</span>
+                            <span>Rebar</span>
+                            <span>200 lengths</span>
+                            <span class="badge-status">received</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span><b>05 Apr</b> PO-2025-037</span>
+                            <span>40mm Aggregate</span>
+                            <span>60 t</span>
+                            <span class="badge-status">received</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="section-title"><i class="fas fa-clipboard-list"></i> Material requests (site diaries)</div>
+                    <div class="card">
+                        <div style="margin-bottom:10px;">
+                            <span class="badge-info">Wabag Road</span> Requested 20mm agg - 40t (14 Apr)
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <span class="badge-info">Kandep Bridge</span> Requested cement - 50 bags (13 Apr)
+                        </div>
+                        <div>
+                            <span class="badge-info">District Office</span> Requested timber - 30 lengths (12 Apr)
+                        </div>
+                        <hr>
+                        <div><i class="fas fa-clock"></i> 8 requests pending fulfillment</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- footer bar with summary -->
+            <div class="footer-bar">
+                <div style="display: flex; gap: 40px;">
+                    <div><i class="fas fa-boxes"></i> Total stock value: K487,200</div>
+                    <div><i class="fas fa-exclamation-triangle"></i> 12 items low stock</div>
+                    <div><i class="fas fa-truck"></i> 8 pending deliveries</div>
+                </div>
+                <div><span class="badge"><i class="far fa-clock"></i> Last updated: today 15:15</span></div>
+            </div>
+
+            <!-- bottom hint -->
+            <div style="margin-top:30px; font-size:0.8rem; color:#506e91; background:#f5f9ff; border-radius:18px; padding:16px;">
+                <i class="fas fa-circle-info"></i> Materials module integrates with: project BOQs, site diaries (material usage), purchase orders, delivery dockets, supplier contracts, and payment vouchers.
+            </div>
+        </div>
+    </div>
+
+    <!-- footer (consistent) -->
+    <div style="background:#fafcff; border-top:1px solid #dfe9f2; padding:12px 32px; display:flex; justify-content:space-between; font-size:0.8rem; color:#2c577b">
+        <span><i class="far fa-registered"></i> PWTS Enterprise · demo for requirements presentation</span>
+        <span><i class="fas fa-database"></i> mockup v1.0 · based on Enga Province structure</span>
+    </div>
+</div>
+<!-- end app-container -->
+</body>
+</html>

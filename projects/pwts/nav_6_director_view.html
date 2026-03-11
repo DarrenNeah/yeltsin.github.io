@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWTS · Director's View · Enterprise Demo</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: Inter + Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* --- consistent styles from previous pages --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f1f5f9;
+            color: #0b1e33;
+            line-height: 1.5;
+            padding: 24px;
+        }
+
+        .app-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            overflow: hidden;
+            border: 1px solid #e9eef2;
+        }
+
+        .top-nav {
+            background: #082032;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #1e3a5f;
+            flex-wrap: wrap;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 0;
+        }
+
+        .logo-icon {
+            background: #2f7bff;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: white;
+            letter-spacing: -0.2px;
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            font-size: 0.7rem;
+            color: #a4b8d3;
+            font-weight: 500;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 8px 18px;
+            border-radius: 40px;
+            color: #d0e0ff;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.15s;
+            cursor: default;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .nav-item i {
+            font-size: 1rem;
+        }
+
+        .nav-item.active {
+            background: #1f4a8f;
+            color: white;
+        }
+
+        .nav-item:not(.active):hover {
+            background: #1a334f;
+            color: white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+            cursor: default;
+        }
+
+        .user-profile a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .badge {
+            background: #2f7bff;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-director {
+            background: #d4af37;
+            color: #0a2a44;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            background: #31688e;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid #5c8bc0;
+        }
+
+        .main-layout {
+            display: flex;
+            min-height: 700px;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #fafcff;
+            border-right: 1px solid #e0e8f0;
+            padding: 24px 16px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 32px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #597a9f;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-left: 12px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            padding: 10px 12px;
+            margin-bottom: 4px;
+            border-radius: 12px;
+            font-weight: 500;
+            color: #1e3a5f;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: default;
+            transition: 0.1s;
+        }
+
+        .sidebar-menu li i {
+            width: 22px;
+            color: #4a6f94;
+        }
+
+        .sidebar-menu a {
+            color: #4a6f94;
+            text-decoration: none;
+        }
+
+        .sidebar-menu li.active {
+            background: #e6f0ff;
+            color: #0f3b7a;
+            font-weight: 600;
+            border-left: 4px solid #2f7bff;
+        }
+
+        .sidebar-menu li:not(.active):hover {
+            background: #edf2f9;
+        }
+
+        .content-panel {
+            flex: 1;
+            background: white;
+            padding: 28px 32px;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-header h2 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #0b1e33;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid #cfddee;
+            cursor: default;
+            transition: 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #0a2a44;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 16px -6px #1d4e8d;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #b7c9e0;
+            color: #1a3d62;
+        }
+
+        .btn i {
+            font-size: 1rem;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: #f9fcff;
+            border-radius: 28px;
+            padding: 24px 20px;
+            border: 1px solid #dde6f2;
+            box-shadow: 0 4px 10px -6px #abc0d6;
+        }
+
+        .stat-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: #55799e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #082032;
+            margin-top: 8px;
+        }
+
+        .stat-desc {
+            font-size: 0.8rem;
+            color: #3f688b;
+            margin-top: 4px;
+        }
+
+        .priority-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .priority-card {
+            background: #ffffff;
+            border: 1px solid #e3ebf6;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 8px 20px -12px #b7c9da;
+        }
+
+        .priority-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #173458;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .priority-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #edf2f8;
+        }
+
+        .priority-item:last-child {
+            border-bottom: none;
+        }
+
+        .priority-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .priority-badge {
+            width: 8px;
+            height: 8px;
+            border-radius: 8px;
+            background: #2f7bff;
+        }
+
+        .priority-badge.urgent { background: #b53b3b; }
+        .priority-badge.warning { background: #a86800; }
+        .priority-badge.info { background: #1f5090; }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            background: #ffffff;
+            border: 1px solid #e3ebf6;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 8px 20px -12px #b7c9da;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #173458;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+
+        .approval-table {
+            background: #ffffff;
+            border: 1px solid #e3ebf6;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+
+        .exception-list {
+            margin-top: 20px;
+        }
+
+        .exception-item {
+            background: #fff9f0;
+            border-left: 4px solid #a86800;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exception-item.urgent {
+            background: #fff0f0;
+            border-left-color: #b53b3b;
+        }
+
+        .footer-bar {
+            margin-top: 40px;
+            background: #f2f7fd;
+            border-radius: 24px;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #2d4b73;
+            border: 1px solid #dae4f0;
+        }
+
+        .badge-status {
+            background: #daf1e7;
+            color: #0b6e4f;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+
+        .badge-warning {
+            background: #fff3d1;
+            color: #a86800;
+        }
+
+        .badge-urgent {
+            background: #ffe6e5;
+            color: #b53b3b;
+        }
+
+        .badge-info {
+            background: #e2eafc;
+            color: #1f5090;
+        }
+
+        .signature-panel {
+            background: #f6fbff;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px dashed #2f7bff;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+
+    <!-- top navigation (Dashboard active but Director's view indicator) -->
+    <div class="top-nav">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fas fa-road"></i></div>
+            <div class="logo-text">
+                <h1>PWTS·Enterprise</h1>
+                <span>Provincial Works & Technical Services</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a class="nav-item" href="index.html"><i class="fas fa-columns"></i> Dashboard</a>
+            <a class="nav-item" href="nav_1_projects.html"><i class="fas fa-hard-hat"></i> Projects</a>
+            <a class="nav-item" href="nav_2_claims.html"><i class="fas fa-file-invoice-dollar"></i> Claims</a>
+            <a class="nav-item" href="nav_3_fleet.html"><i class="fas fa-truck"></i> Fleet</a>
+            <a class="nav-item" href="nav_4_materials.html"><i class="fas fa-cubes"></i> Materials</a>
+            <a class="nav-item" href="nav_5_reports.html"><i class="fas fa-chart-pie"></i> Reports</a>
+        </div>
+        <div class="user-profile">
+            <a href="nav_6_director_view.html" class="batch badge-director"><i class="fas fa-crown"></i> Director's view</a>
+            <div class="avatar">CKB</div>
+        </div>
+    </div>
+
+    <!-- main layout: sidebar + content -->
+    <div class="main-layout">
+        <!-- SIDEBAR (Executive Dashboard active) -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-heading">Governance</div>
+                <ul class="sidebar-menu">
+                    <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> Executive Dashboard</a></li>
+                    <li><a href="sidebar_2_delegation_register.html"><i class="fas fa-file-signature"></i> Delegation Register</a></li>
+                    <li><a href="sidebar_3_pa_approval.html"><i class="fas fa-stamp"></i> Approvals (PA)</a></li>
+                    <li><a href="sidebar_4_contractors.html"><i class="fas fa-handshake"></i> Contractors</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-heading">Operational</div>
+                <ul class="sidebar-menu">
+                    <li><i class="fas fa-bridge"></i> Technical Services</li>
+                    <li><i class="fas fa-tools"></i> Building & Maintenance</li>
+                    <li><i class="fas fa-oil-can"></i> Plant & Transport</li>
+                    <li><i class="fas fa-clipboard-list"></i> Site Diaries</li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-heading">Finance & Claims</div>
+                <ul class="sidebar-menu">
+                    <li><i class="fas fa-file-invoice"></i> Contractor Claims</li>
+                    <li><i class="fas fa-file-certificate"></i> IPCs (Engineer)</li>
+                    <li><i class="fas fa-money-bill-wave"></i> Payment Vouchers</li>
+                    <li><i class="fas fa-hand-holding-usd"></i> Petty Cash / Imprest</li>
+                    <li><i class="fas fa-book-open"></i> GL Codes</li>
+                </ul>
+            </div>
+            <div style="border-top: 1px dashed #b9cee8; margin: 20px 0; padding-top: 20px;">
+                <div class="sidebar-heading">DIRECTOR'S TOOLS</div>
+                <ul class="sidebar-menu">
+                    <li><i class="fas fa-bell"></i> Approvals pending</li>
+                    <li><i class="fas fa-exclamation-triangle"></i> Exception reports</li>
+                    <li><i class="fas fa-file-signature"></i> Delegation limits</li>
+                    <li><i class="fas fa-history"></i> Audit trail</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT: DIRECTOR'S VIEW -->
+        <div class="content-panel">
+            <!-- info banner - personalized for Director -->
+            <div style="background:#f0f3f8; border-radius:16px; padding:12px 20px; color:#1f3f60; font-size:0.85rem; margin-bottom:24px; border-left:6px solid #d4af37;">
+                <i class="fas fa-crown" style="color:#d4af37; margin-right:10px;"></i> 
+                <strong>Director's executive dashboard</strong> — personalized view for J. Niale, Director PWTS. Shows pending approvals, key decisions, and organizational health metrics. Last login: today 08:30.
+            </div>
+
+            <!-- welcome header with quick actions -->
+            <div class="page-header">
+                <div>
+                    <h2>Good morning, Director CKB</h2>
+                    <p style="color:#55799e; margin-top:4px;">Here's what needs your attention today</p>
+                </div>
+                <div class="btn-group">
+                    <div class="btn btn-outline"><i class="fas fa-print"></i> Print brief</div>
+                    <div class="btn btn-primary"><i class="fas fa-check-double"></i> Quick approve</div>
+                </div>
+            </div>
+
+            <!-- priority stats - focused on Director's decision points -->
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-title">
+                        <span><i class="fas fa-file-signature"></i> Pending approval</span>
+                        <span class="badge-urgent">4</span>
+                    </div>
+                    <div class="stat-number">K487,200</div>
+                    <div class="stat-desc">Claims awaiting your signature</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">
+                        <span><i class="fas fa-exclamation-triangle"></i> Exceptions</span>
+                        <span class="badge-urgent">3</span>
+                    </div>
+                    <div class="stat-number">2 critical</div>
+                    <div class="stat-desc">Require immediate attention</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">
+                        <span><i class="fas fa-hourglass-half"></i> Overdue (FIDIC)</span>
+                        <span class="badge-warning">5</span>
+                    </div>
+                    <div class="stat-number">38 days avg</div>
+                    <div class="stat-desc">Claims >42 days: 2</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">
+                        <span><i class="fas fa-chart-line"></i> MTD expenditure</span>
+                        <span class="badge-status">K2.1M</span>
+                    </div>
+                    <div class="stat-number">68%</div>
+                    <div class="stat-desc">of monthly budget</div>
+                </div>
+            </div>
+
+            <!-- two-column priority section -->
+            <div class="priority-grid">
+                <!-- left: pending approvals -->
+                <div class="priority-card">
+                    <div class="priority-title">
+                        <i class="fas fa-clock" style="color:#2f7bff;"></i> Pending your approval
+                        <span class="badge-urgent" style="margin-left:auto;">4 items</span>
+                    </div>
+                    <div class="priority-item">
+                        <div class="priority-label">
+                            <span class="priority-badge urgent"></span>
+                            <span><b>C-2409</b> Highlands Const.</span>
+                        </div>
+                        <div>K176,500</div>
+                        <div class="badge-warning">>K100k</div>
+                    </div>
+                    <div class="priority-item">
+                        <div class="priority-label">
+                            <span class="priority-badge warning"></span>
+                            <span><b>C-2415</b> PNG Aggregates</span>
+                        </div>
+                        <div>K295,000</div>
+                        <div class="badge-warning">>K100k</div>
+                    </div>
+                    <div class="priority-item">
+                        <div class="priority-label">
+                            <span class="priority-badge"></span>
+                            <span><b>C-2418</b> Kandep Civil</span>
+                        </div>
+                        <div>K47,800</div>
+                        <div class="badge-status">within limit</div>
+                    </div>
+                    <div class="priority-item">
+                        <div class="priority-label">
+                            <span class="priority-badge"></span>
+                            <span><b>C-2420</b> Lagaip Builders</span>
+                        </div>
+                        <div>K28,500</div>
+                        <div class="badge-status">within limit</div>
+                    </div>
+                    <div style="margin-top:16px;">
+                        <span class="doc-tag"><i class="fas fa-info-circle"></i> 2 claims exceed delegation (need PA)</span>
+                    </div>
+                </div>
+
+                <!-- right: critical alerts -->
+                <div class="priority-card">
+                    <div class="priority-title">
+                        <i class="fas fa-exclamation-triangle" style="color:#b53b3b;"></i> Critical alerts
+                        <span class="badge-urgent" style="margin-left:auto;">3 urgent</span>
+                    </div>
+                    <div class="exception-item urgent">
+                        <div><i class="fas fa-tools"></i> <b>E-07 Excavator</b> breakdown</div>
+                        <div class="badge-urgent">8 days</div>
+                    </div>
+                    <div class="exception-item urgent">
+                        <div><i class="fas fa-boxes"></i> <b>Cement critical</b> - 320 bags left</div>
+                        <div class="badge-urgent">11 days stock</div>
+                    </div>
+                    <div class="exception-item">
+                        <div><i class="fas fa-road"></i> <b>Porgera road</b> suspended</div>
+                        <div class="badge-warning">land dispute</div>
+                    </div>
+                    <div class="exception-item">
+                        <div><i class="fas fa-file-invoice"></i> <b>Overdue claims</b> (2 >42d)</div>
+                        <div class="badge-warning">C-2401, C-2389</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- charts section - executive overview -->
+            <div class="chart-grid">
+                <!-- Chart 1: Budget vs Actual by month -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-bar" style="color:#2f7bff;"></i> Budget vs Actual (YTD)
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+                <!-- Chart 2: Project completion status -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-pie" style="color:#2f7bff;"></i> Project completion status
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="completionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- delegation and signature panel -->
+            <div class="signature-panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <h4 style="font-size:1.1rem;"><i class="fas fa-file-signature"></i> Your delegation & signature authority</h4>
+                    <span class="badge-status">Active: 01 Jan - 31 Dec 2025</span>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+                    <div>
+                        <div style="color:#55799e; font-size:0.8rem;">Direct approval</div>
+                        <div style="font-size:1.5rem; font-weight:700;">K100,000</div>
+                        <div style="font-size:0.8rem;">per claim</div>
+                    </div>
+                    <div>
+                        <div style="color:#55799e; font-size:0.8rem;">Endorsement to PA</div>
+                        <div style="font-size:1.5rem; font-weight:700;">K100k - K500k</div>
+                        <div style="font-size:0.8rem;">requires PA signature</div>
+                    </div>
+                    <div>
+                        <div style="color:#55799e; font-size:0.8rem;">Acting delegate</div>
+                        <div style="font-size:1.5rem; font-weight:700;">J. Waigani</div>
+                        <div style="font-size:0.8rem;">until 30 Apr (leave)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- key decisions and recent activity -->
+            <div style="display:grid; grid-template-columns:2fr 1fr; gap:24px; margin-top:24px;">
+                <!-- left: recent decisions log -->
+                <div class="card">
+                    <div class="section-title" style="margin-bottom:16px;">
+                        <i class="fas fa-history"></i> Your recent decisions
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #edf2f8;">
+                        <span><i class="fas fa-check-circle" style="color:#0b6e4f;"></i> Approved C-2412</span>
+                        <span>K47,800</span>
+                        <span class="badge-status">Today 09:30</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #edf2f8;">
+                        <span><i class="fas fa-check-circle" style="color:#0b6e4f;"></i> Endorsed C-2409 to PA</span>
+                        <span>K176,500</span>
+                        <span class="badge-warning">Yesterday</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #edf2f8;">
+                        <span><i class="fas fa-times-circle" style="color:#b53b3b;"></i> Rejected fuel claim</span>
+                        <span>K2,400</span>
+                        <span class="badge-urgent">Yesterday</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:8px 0;">
+                        <span><i class="fas fa-check-circle" style="color:#0b6e4f;"></i> Approved PO-2025-044</span>
+                        <span>K18,500</span>
+                        <span class="badge-status">12 Apr</span>
+                    </div>
+                </div>
+
+                <!-- right: quick stats -->
+                <div class="card">
+                    <div class="section-title" style="margin-bottom:16px;">
+                        <i class="fas fa-chart-simple"></i> This month summary
+                    </div>
+                    <div style="margin-bottom:12px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Claims approved:</span>
+                            <span><b>18</b></span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Total value:</span>
+                            <span><b>K1.2M</b></span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div style="margin-top:12px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Projects visited:</span>
+                            <span><b>4</b></span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Site meetings:</span>
+                            <span><b>3</b></span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div style="margin-top:12px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span>Next PA meeting:</span>
+                            <span><b>18 Apr 10:00</b></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- footer bar with personalized summary -->
+            <div class="footer-bar">
+                <div style="display: flex; gap: 40px;">
+                    <div><i class="fas fa-check-circle"></i> 4 pending approvals</div>
+                    <div><i class="fas fa-exclamation-triangle"></i> 3 critical alerts</div>
+                    <div><i class="fas fa-calendar"></i> Next delegation review: 30 Apr</div>
+                </div>
+                <div><span class="badge"><i class="far fa-clock"></i> Last action: 09:30 today</span></div>
+            </div>
+
+            <!-- bottom hint -->
+            <div style="margin-top:30px; font-size:0.8rem; color:#506e91; background:#f5f9ff; border-radius:18px; padding:16px;">
+                <i class="fas fa-circle-info"></i> Director's view shows personalized data based on your role and delegation limits. All pending approvals, critical alerts, and key metrics are filtered for your attention.
+            </div>
+        </div>
+    </div>
+
+    <!-- footer (consistent) -->
+    <div style="background:#fafcff; border-top:1px solid #dfe9f2; padding:12px 32px; display:flex; justify-content:space-between; font-size:0.8rem; color:#2c577b">
+        <span><i class="far fa-registered"></i> PWTS Enterprise · demo for requirements presentation</span>
+        <span><i class="fas fa-database"></i> mockup v1.0 · based on Enga Province structure</span>
+    </div>
+</div>
+
+<!-- Chart.js initialization script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Budget vs Actual Chart
+        const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+        new Chart(budgetCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+                datasets: [
+                    {
+                        label: 'Budget',
+                        data: [850, 920, 980, 1050],
+                        backgroundColor: '#a3c6ff',
+                        borderRadius: 8
+                    },
+                    {
+                        label: 'Actual',
+                        data: [780, 890, 1020, 980],
+                        backgroundColor: '#2f7bff',
+                        borderRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        grid: { color: '#e2eaf3' },
+                        title: { display: true, text: 'K thousands' }
+                    }
+                }
+            }
+        });
+
+        // Project Completion Status Chart
+        const pieCtx = document.getElementById('completionChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['On track', 'At risk', 'Behind', 'Suspended'],
+                datasets: [{
+                    data: [12, 4, 2, 1],
+                    backgroundColor: ['#2f7bff', '#ffb347', '#b53b3b', '#a0a0a0'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                cutout: '60%'
+            }
+        });
+    });
+</script>
+</body>
+</html>
